@@ -154,4 +154,4 @@ AUTHENTICATION_BACKENDS = [
     'saml.backends.EmailAuthBackend',    
 ]
 
-# AUTH_USER_MODEL = "saml.AuthUser"
+AUTH_USER_MODEL = "saml.AuthUser"

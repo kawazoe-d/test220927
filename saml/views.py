@@ -35,13 +35,14 @@ def init_request_xml():
 
     xml_string = generate_saml_request_xml(request_id, time)
 
-    # XMLを文字列からElementに直接パース
-    root = ET.fromstring(xml_string)
-
     # IDをキャッシュにセット
     cache_name = 'in_request_to.cache' + request_id
     cache.set(cache_name, request_id, 30)
 
+    # XMLを文字列からElementに直接パース
+    root = ET.fromstring(xml_string)
+
+    # XMLをデコードして返す
     ret = ET.tostring(root)
     retdeco = ret.decode()
     b64encoded = OneLogin_Saml2_Utils.deflate_and_base64_encode(retdeco)
@@ -51,7 +52,7 @@ def init_request_xml():
 def generate_saml_request_xml(id, time):
     """
     SAMLリクエスト用のXMLを生成
-    StringIODEを文字列にして返す
+    StringIOを文字列にして返す
     """
     stream = io.StringIO()
 
@@ -109,6 +110,12 @@ def prepare_django_request(request):
     return result
 
 def index(request):
+    """
+    TOPページ表示
+    TOPページをレンダリングする
+    """
+
+    # ログイン済か確認
     if request.user.is_authenticated:
         user = request.user
 
@@ -118,10 +125,6 @@ def index(request):
 
         return render(request, 'user.html', params)
 
-    """
-    TOPページ表示
-    TOPページをレンダリングする
-    """
     req = prepare_django_request(request)
     errors = []
     error_reason = None
@@ -184,6 +187,9 @@ def acs(request):
         user = authenticate(request, username=email)
         if user is not None:
             login(request, user)
+    else:
+        paint_logout = False
+        attributes = {}
     params = {'errors': errors, 'attributes': attributes, 'paint_logout': paint_logout}
     # return render(request, 'index.html', params)
     return redirect('/')
