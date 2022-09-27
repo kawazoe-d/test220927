@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if errors %}
+  <div class="alert alert-danger" role="alert">
+    <strong>Errors:</strong>
+    <ul class="list-unstyled">
+        <li>{{errors}}</li>
+    </ul>
+  </div>
+{% endif %}
+
+{% if paint_logout %}
+  {% if attributes %}
+    {% if user %}
+      <p>{{user.username}}</p>
+      <p>{{user.date_joined}}</p>
+    {% endif %}
+    <table class="table table-striped">
+      <thead>
+        <th>Name</th><th>Values</th>
+      </thead>
+      <tbody>
+        {% for key, value in attributes.items %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-danger" role="alert">You don't have any attributes</div>
+  {% endif %}
+  <a href="{% url "index" %}?slo" class="btn btn-danger">Logout</a>
+{% else %}
+  <a href="{% url "index" %}?sso" class="btn btn-primary">ログイン</a>
+{% endif %}
+
+{% if times %}
+<p>{{ times }}</p>
+{% endif %}
+
+{% endblock %}
